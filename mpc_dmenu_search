@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Searches through my MPD database using dmenu, layered multiple times
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+CHOICE=$(cat ~/Scripts/dmenu_mpc_options2.txt | $DMENU -p 'MPD:')
+# SPE=$(./Scripts/escapeme.py "$SPECIFIC")
+case $CHOICE in
+	Add)
+		TYPE=$(cat ~/Scripts/dmenu_mpc_options.txt | $DMENU -p 'Type:')
+		SPECIFIC="$(mpc --no-status list $TYPE | $DMENU -p 'Specifically:')"
+		mpc findadd $TYPE "$SPECIFIC"
+	;;
+	Insert)
+		# Still very much a work in progress
+		TYPE=$(cat ~/Scripts/dmenu_mpc_options.txt | $DMENU -p 'Type:')
+		SPECIFIC="$(mpc --no-status list $TYPE | $DMENU -p 'Specifically:')"
+		FILES=$(mpc search $TYPE "$SPECIFIC")
+		echo $FILES
+		mpc insert "$FILES"
+	;;
+	Play)
+		TYPE=$(cat ~/Scripts/dmenu_mpc_options.txt | $DMENU -p 'Type:')
+		SPECIFIC="$(mpc --no-status list $TYPE | $DMENU -p 'Specifically:')"
+		mpc clear
+		mpc findadd $TYPE "$SPECIFIC"
+		mpc play
+	;;
+	Clear)
+		mpc clear
+	;;
+	Settings)
+	;;
+esac

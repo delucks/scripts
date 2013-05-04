@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -lt 1 0; then
+	echo "No destination specified, use $0 destination" >&2
+	exit 1
+elif [ $# -gt 1 ]; then
+	echo "Too many arguments, use $0 destination" >&2
+	exit 1
+fi
+
+STIME=$(date +%s)
+rsync -aAXv /* $1 --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/run/*,/mnt/*,/media/*,/lost+found,/home/*/.gvfs,/var/lib/pacman/sync*,/home/*/Videos}
+FINISH=$(date +%s)
+echo "Total time: $(( ($FINISH-$STIME) / 60 )) minutes, $(( ($FINISH-$STIME) % 60 )) seconds"
+
+touch $1/"Backup from $(date '+%A, %d %B %Y, %T')"

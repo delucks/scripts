@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Reads all dirs of wallpaper folder to set the mood
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+echo $(find ~/Pictures/wallpaper/ -type d -print | cut -c 32- | $DMENU) > ~/Pictures/wallmood.txt
