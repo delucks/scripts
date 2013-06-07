@@ -1,0 +1,7 @@
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENUR='dmenu_run'
+fi
+
+$DMENUR -p 'archrival$'

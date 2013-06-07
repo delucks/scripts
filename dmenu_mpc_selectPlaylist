@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Switches the MPD Playlist using dmenu
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+play=$(mpc lsplaylists | $DMENU -p 'Playlist Name:')
+
+if [ "$play" != "" ]; then
+	mpc --no-status clear
+	mpc --no-status load "$play"
+	mpc --no-status play
+fi

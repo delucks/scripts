@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Run with elevated priveleges.
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -p "Wifi:"'
+fi
+
+nmcli d wifi connect $(nmcli -f BSSID,SSID,RATE d wifi list | $DMENU -l 5 | awk '{print $1}')

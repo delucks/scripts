@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# Author: jluck
+#
+# Purpose: Find file within commonly used dirs in $HOME, and open with a program quickly
+#
+# Revision: 0.1a
+#
+# # # # # # # # # # # # # # # # # # # # # # # #
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+# cache=/home/jamie/.cache/dmenu_search
+# files=$(find ~/Arduino/ ~/Dev/ ~/Downloads/ ~/Music/ ~/Scripts/ ~/Calibre\ Library/ ~/Documents/ ~/Dropbox/ ~/iso/ ~/Pictures/ ~/Videos/ -type f)
+
+# if stest -dqr -n "$cache" $files; then
+	# fname=$(stest -flx $files | sort -u | tee "$cache" | $DMENU)
+# else
+	# fname=$($DMENU < "$cache")
+# fi
+
+fname=$(find ~/.config/ ~/.dotfiles/ ~/Arduino/ ~/Dev/ ~/Downloads/ ~/Music/ ~/Scripts/ ~/Calibre\ Library/ ~/Documents/ ~/Dropbox/ ~/iso/ ~/Pictures/ ~/Videos/ -type f | $DMENU -l 10)
+com=$(cat .cache/dmenu_run | $DMENU)
+
+$com "$fname"
