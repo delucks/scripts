@@ -1,0 +1,8 @@
+#!/bin/bash
+
+tmux has-session -t0
+if [ $? -gt 0 ]; then
+	tmux
+else
+	tmux a
+fi

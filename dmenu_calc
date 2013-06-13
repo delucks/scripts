@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. ~/.dmenurc
+
+CM1=$(xclip -o)
+CM2=$(echo $CM1 | $DMENU -p Calc: | calc -p)
+[ $CM2 ] && echo $CM2 | xclip -i | echo $CM2 | $DMENU -p Ans:

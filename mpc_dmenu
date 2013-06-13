@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ -f ~/.dmenurc ]; then
-	. ~/.dmenurc
-else
-	DMENU='dmenu -i'
-fi
-
-mpc --no-status play $(sed -n "s@^ *\([0-9]\+\);$(mpc playlist|$DMENU -p 'Song Name:'||echo ";;;")@\1@p" < <(mpc playlist|nl -s ';'))

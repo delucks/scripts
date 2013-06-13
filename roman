@@ -1,4 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
+# Roman Numeral Engine, by jluck in a bored evening
 import argparse
 
 def encode(value):
@@ -81,11 +82,14 @@ def optimize(numeral):
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--decode", action="store_true", help="Decode a numeral")
 parser.add_argument("-e", "--encode", action="store_true", help="Encode a number")
+parser.add_argument("-o", "--optimize", action="store_true", help="Optimize a numeral")
 parser.add_argument("number", type=str, help="Input the number or string to decode")
 args = parser.parse_args()
 if args.decode:
 	print decode(args.number)
 elif args.encode:
 	print encode(int(args.number))
+elif args.optimize:
+	print optimize(args.number)
 else:
 	print "Please specify an option"

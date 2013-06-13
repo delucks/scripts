@@ -5,11 +5,15 @@ IF="Master"
 SECS="1"
 
 FONT="Envy Code R"
-BG="#262729"
-FG="#9dba3a"
+# FONT="Ubuntu"
+. ~/.colors/currentvars
+# BG="#262729"
+# FG="#9dba3a"
+BG="$bg"
+FG="$mg"
 XPOS="835"
 YPOS="530"
-WIDTH="250"
+WIDTH="300"
 
 #Probably do not customize
 PIPE="/tmp/dvolpipe"
@@ -69,4 +73,8 @@ if [ ! -e "$PIPE" ]; then
 fi
 
 #Feed the pipe!
-(echo "Volume" ; echo "$VOL" | gdbar -w "$WIDTH" -fg "$FG" -bg "$BG" ; sleep "$SECS") > "$PIPE"
+STR=$(mpc current)
+if [[ $STR == "" ]]; then
+	STR="Volume"
+fi
+(echo "$STR" ; echo "$VOL" | gdbar -w "$WIDTH" -fg "$FG" -bg "$BG" ; sleep "$SECS") > "$PIPE"

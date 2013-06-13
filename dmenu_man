@@ -6,4 +6,5 @@ else
 	DMENU='dmenu -i'
 fi
 
-urxvt -e bash -c "man $(~/Scripts/lpath | $DMENU -p 'Man:')"
+. ~/.zshrc
+urxvt -e zsh -c "man $($DMENU -p 'Man:' < ~/.cache/dmenu_run)"
