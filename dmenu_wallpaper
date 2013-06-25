@@ -8,4 +8,4 @@ else
 	DMENU='dmenu -i'
 fi
 
-echo $(find ~/Pictures/wallpaper/ -type d -print | cut -c 32- | $DMENU) > ~/Pictures/wallmood.txt
+echo $(find ~/pictures/wallpaper/ -type d -print | cut -c 32- | $DMENU) > ~/pictures/wallmood.txt

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. ~/.rscurrent
+. ~/.bcurrent
+
+if [[ "$1" = "-d" && $TEMP -lt 7000 ]]; then
+	redshiftgui -o -t $(($TEMP+100)):$(($TEMP+100))
+	echo "TEMP=$(($TEMP+100))" > ~/.rscurrent
+elif [[ "$1" = "-i" && $TEMP -gt 3400 ]]; then
+	redshiftgui -o -t $(($TEMP-100)):$(($TEMP-100))
+	echo "TEMP=$(($TEMP-100))" > ~/.rscurrent
+elif [[ "$1" = "-b" && $(echo $BRIGHT \< 1.0 | bc) ]]; then
+	redshiftgui -o -b $(echo $BRIGHT + 0.1 | bc)
+	echo "BRIGHT=$(echo $BRIGHT + 0.1 | bc)" > ~/.bcurrent
+elif [[ "$1" = "-l" && $(echo $BRIGHT \> 0.1 | bc) ]]; then
+	redshiftgui -o -b $(echo $BRIGHT - 0.1 | bc)
+	echo "BRIGHT=$(echo $BRIGHT - 0.1 | bc)" > ~/.bcurrent
+else
+	echo $TEMP
+fi
