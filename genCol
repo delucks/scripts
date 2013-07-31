@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# Script to generate a color scheme based on symlink ~/.colors/current, which feeds .Xresources
+# Created by jluck 060713
+# Deps: dmenu, cat, awk, grep, sed, bash, ln, tail, X
+# Optional deps: i3 (my wm, I wrote some stuff to gen it's colors)
+
+# Theme must be saved in .xr format in ~/.colors, and should have colors in following order:
+# 		background
+#			foreground
+# 		color0-15
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+# ---------------
+# Choose a new theme
+# ---------------
+
+theme=$(find ~/.colors -name '*.xr' | $DMENU)
+unlink ~/.colors/current
+ln -s "$theme" ~/.colors/current
+
+xrdb -merge ~/.Xresources
+
+# ---------------
+# Creating Variables
+# ---------------
+
+outfile=/home/jamie/.colors/currentvars
+cp $outfile $outfile.old #So we can use it to sed out all the old colors
+# sed -i -e 's/^/o/' $outfile.old # All the vars are the same, but with o prepended to them
+
+# Create a file holding bash-style variables for use with compatible applications
+>$outfile
+echo "bg='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '1q;d' | sed 's/^....//')'" >> $outfile
+echo "fg='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '2q;d')'" >> $outfile
+echo "bk='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '3q;d')'" >> $outfile
+echo "rd='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '4q;d')'" >> $outfile
+echo "gr='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '5q;d')'" >> $outfile
+echo "yl='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '6q;d')'" >> $outfile
+echo "bl='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '7q;d')'" >> $outfile
+echo "mg='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '8q;d')'" >> $outfile
+echo "cy='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '9q;d')'" >> $outfile
+echo "wh='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '10q;d')'" >> $outfile
+echo "bk1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '11q;d')'" >> $outfile
+echo "rd1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '12q;d')'" >> $outfile
+echo "gr1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '13q;d')'" >> $outfile
+echo "yl1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '14q;d')'" >> $outfile
+echo "bl1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '15q;d')'" >> $outfile
+echo "mg1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '16q;d')'" >> $outfile
+echo "cy1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '17q;d')'" >> $outfile
+echo "wh1='$(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '18q;d')'" >> $outfile
+
+# ---------------
+# sed'ing out all the old stuff
+# ---------------
+
+# Files we're concerned with here:
+#		~/.config/dunst/dunstrc [G,Y,R,BG,FG]
+#		~/.mozilla/firefox/zpzjvbje.default/chrome/userChrome.css [All]
+#		~/.i3status.conf
+
+# . $outfile.old
+# . $outfile
+
+# sed -i -e "s/$obg/$bg/g" -e "s/$ofg/$fg/g" -e "s/$obk/$bk/g" -e "s/$ord/$rd/g" -e "s/$ogr/$gr/g" -e "s/$oyl/$yl/g" -e "s/$obl/$bl/g" -e "s/$omg/$mg/g" -e "s/$ocy/$cy/g" -e "s/$owh/$wh/g" ~/.mozilla/firefox/zpzjvbje.default/chrome/userChrome.css
+# sed -i -e "s/$obg/$bg/g" -e "s/$ofg/$fg/g" -e "s/$obk/$bk/g" -e "s/$ord/$rd/g" -e "s/$ogr/$gr/g" -e "s/$oyl/$yl/g" -e "s/$obl/$bl/g" -e "s/$omg/$mg/g" -e "s/$ocy/$cy/g" -e "s/$owh/$wh/g" ~/.config/dunst/dunstrc
+# sed -i -e "s/$obg/$bg/g" -e "s/$ofg/$fg/g" -e "s/$obk/$bk/g" -e "s/$ord/$rd/g" -e "s/$ogr/$gr/g" -e "s/$oyl/$yl/g" -e "s/$obl/$bl/g" -e "s/$omg/$mg/g" -e "s/$ocy/$cy/g" -e "s/$owh/$wh/g" ~/.i3status.conf
+
+# killall dunst && dunst & 2>&1 > /dev/null
+# Would restart firefox too, but it bitches at me for doing so.
+
+# ---------------
+# i3 Stuff
+# ---------------
+
+i3file=/home/jamie/.i3/config
+tmpfile=/home/jamie/.colors/tmp
+
+tail -n +19 $i3file > $tmpfile # Remove the first 18 lines, put them in the tempfile,
+cat $tmpfile > $i3file # and replace the original contents with it
+
+>$tmpfile # Zero out the temp file
+
+# Append variables in i3 style on tmpfile
+echo "set \$bg $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '1q;d' | sed 's/^....//')" >> $tmpfile
+echo "set \$fg $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '2q;d')" >> $tmpfile
+echo "set \$bk $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '3q;d')" >> $tmpfile
+echo "set \$rd $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '4q;d')" >> $tmpfile
+echo "set \$gr $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '5q;d')" >> $tmpfile
+echo "set \$yl $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '6q;d')" >> $tmpfile
+echo "set \$bl $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '7q;d')" >> $tmpfile
+echo "set \$mg $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '8q;d')" >> $tmpfile
+echo "set \$cy $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '9q;d')" >> $tmpfile
+echo "set \$wh $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '10q;d')" >> $tmpfile
+echo "set \$bk1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '11q;d')" >> $tmpfile
+echo "set \$rd1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '12q;d')" >> $tmpfile
+echo "set \$gr1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '13q;d')" >> $tmpfile
+echo "set \$yl1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '14q;d')" >> $tmpfile
+echo "set \$bl1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '15q;d')" >> $tmpfile
+echo "set \$mg1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '16q;d')" >> $tmpfile
+echo "set \$cy1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '17q;d')" >> $tmpfile
+echo "set \$wh1 $(cat ~/.colors/current | grep \# | awk '{print $2}' | sed '18q;d')" >> $tmpfile
+
+# Perform the swap of temp file and i3file, creating a backup, then restart i3, applying the changes
+cat $i3file >> $tmpfile
+cp $i3file $i3file.bk
+cp $tmpfile $i3file
+# i3-msg restart

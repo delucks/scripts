@@ -4,13 +4,11 @@
 IF="Master"
 SECS="1"
 
-FONT="Envy Code R"
+FONT="-aaron-bitocra13-*-*-normal-*-*-*-*-*-*-*-*-*"
 # FONT="Ubuntu"
 . ~/.colors/currentvars
-# BG="#262729"
-# FG="#9dba3a"
 BG="$bg"
-FG="$gr"
+FG="$rd1"
 XPOS="835"
 YPOS="530"
 WIDTH="300"
@@ -68,7 +66,7 @@ fi
 #Also prevents multiple volume bar instances
 if [ ! -e "$PIPE" ]; then
   mkfifo "$PIPE"
-  (dzen2 -l 1 -x "$XPOS" -y "$YPOS" -w "$WIDTH" -fn "$FONT" -bg "$BG" -fg "#FAFAFA" -e 'onstart=uncollapse' < "$PIPE" 
+  (dzen2 -l 1 -x "$XPOS" -y "$YPOS" -w "$WIDTH" -fn "$FONT" -bg "$BG" -fg "$FG" -e 'onstart=uncollapse' < "$PIPE" 
    rm -f "$PIPE") &
 fi
 
