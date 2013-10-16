@@ -10,11 +10,11 @@
 #			foreground
 # 		color0-15
 
-if [ -f ~/.dmenurc ]; then
-	. ~/.dmenurc
-else
+# if [ -f ~/.dmenurc ]; then
+	# . ~/.dmenurc
+# else
 	DMENU='dmenu -i'
-fi
+# fi
 
 # ---------------
 # Choose a new theme

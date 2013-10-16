@@ -75,4 +75,5 @@ STR=$(mpc current)
 if [[ $STR == "" ]]; then
 	STR="Volume"
 fi
+STR="$(amixer get Speaker | awk '{print $7}' | tail -n1) $STR"
 (echo "$STR" ; echo "$VOL" | gdbar -w "$WIDTH" -fg "$FG" -bg "$BG" ; sleep "$SECS") > "$PIPE"
