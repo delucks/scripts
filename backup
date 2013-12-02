@@ -9,7 +9,7 @@ elif [ $# -gt 1 ]; then
 fi
 
 STIME=$(date +%s)
-rsync -aAXv /* $1 --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/run/*,/mnt/*,/media/*,/lost+found,/home/*/.gvfs,/var/lib/pacman/sync*,/home/*/Videos}
+rsync -aAXv /* $1 --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/run/*,/mnt/*,/media/*,/lost+found,/home/*/.gvfs,/var/lib/pacman/sync*,/home/*/Videos,/home/*/.cache/*}
 FINISH=$(date +%s)
 echo "Total time: $(( ($FINISH-$STIME) / 60 )) minutes, $(( ($FINISH-$STIME) % 60 )) seconds"
 

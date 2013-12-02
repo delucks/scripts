@@ -6,9 +6,9 @@ SECS="1"
 
 FONT="-aaron-bitocra13-*-*-normal-*-*-*-*-*-*-*-*-*"
 # FONT="Ubuntu"
-. ~/.colors/currentvars
-BG="$bg"
-FG="$rd1"
+. ~/.colors
+BG="$COLOR16"
+FG="$COLOR3"
 XPOS="835"
 YPOS="530"
 WIDTH="300"

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Author: delucks
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+# if [ $# -lt 1 ]; then
+	# echo "Not enough arguments"
+# fi
+
+# wmctrl -i -a $(wmctrl -l | grep -i "chrome" | head -n1 | awk '{print $1}')
+wmctrl -xa 'google-chrome' && xdotool windowactivate $(xdotool search --classname --onlyvisible 'google-chrome')
+xte "keydown Control_L" "key l" "keyup Control_L"
+sleep 0.15
+xte "keydown Control_L" "key c" "keyup Control_L"
+# xdotool windowactivate $(xdotool search --classname --onlyvisible 'firefox')
+sleep 0.6
+wmctrl -xa 'firefox'
+xte "keydown Control_L" "key l" "keyup Control_L"
+xte "keydown Control_L" "key v" "keyup Control_L"
+sleep 0.15
+xte "keydown Control_L" "key l" "keyup Control_L"
+xte "key Return"
