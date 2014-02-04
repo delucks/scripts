@@ -5,3 +5,5 @@
 mv ~/Screenshot* ~/screenshot/
 mv ~/*scrot* ~/screenshot/
 mv ~/downloads/*.torrent ~/documents/Dropbox/Oatmeal/Watched/
+rmdir ~/Desktop/
+rmdir ~/Downloads/

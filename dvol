@@ -8,7 +8,7 @@ FONT="-aaron-bitocra13-*-*-normal-*-*-*-*-*-*-*-*-*"
 # FONT="Ubuntu"
 . ~/.colors
 BG="$COLOR16"
-FG="$COLOR3"
+FG="$COLOR17"
 XPOS="835"
 YPOS="530"
 WIDTH="300"
@@ -28,6 +28,7 @@ usage() {
   echo "     -i, --increase - increase volume by \`argument'"
   echo "     -d, --decrease - decrease volume by \`argument'"
   echo "     -t, --toggle   - toggle mute on and off"
+	echo "     -s, --speakers - toggle speakers"
   echo "     -h, --help     - display this"
   exit
 }
@@ -44,6 +45,10 @@ case "$1" in
     ;;
   '-t'|'--toggle')
     AMIXARG="toggle"
+    ;;
+  '-s'|'--speaker')
+    AMIXARG="toggle"
+		IF="Speaker"
     ;;
   ''|'-h'|'--help')
     usage
