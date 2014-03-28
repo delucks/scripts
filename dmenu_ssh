@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source ~/.dmenurc
+
+urxvt -e bash -c "ssh $(cat ~/.ssh/config | grep 'Host\ ' | awk '{print $2}' | $DMENU)"
