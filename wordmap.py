@@ -1,3 +1,5 @@
+import sys
+
 def f(word):
 	m = {}
 	a = ord('a')
@@ -9,6 +11,8 @@ def f(word):
 		p+=m[l]
 	return p
 
-print f('alphabet')=='abcdaefg'
-print f('poop')=='abba'
-print f('appropriate')=='abbcdbceafg'
+#print f('alphabet')=='abcdaefg'
+#print f('poop')=='abba'
+#print f('appropriate')=='abbcdbceafg'
+
+print f(sys.argv[1])
