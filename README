@@ -3,7 +3,8 @@ delucks' script repository!
 All scripts made by me unless noted otherwise.
 You're free to use my work, as long as you credit it.
 
-Some standout bits from here:
-	roman: A python roman numeral engine
+Some cool ones-
+	roman: A python roman numeral translation engine
 	res_sort.py: A python script to determine your wallpaper resolution and sort images based on it
 	dmenu_mpc_search: Control your mpd with dmenu!
+	cdump.py: Dump pages of posts from craigslist so you can grep them
