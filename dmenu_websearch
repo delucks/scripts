@@ -14,4 +14,4 @@ else
 	echo $WS >> ~/.wshist
 fi
 
-[ "$WS" ] && firefox http://"$WS"/
+[ "$WS" ] && chromium "$WS"
