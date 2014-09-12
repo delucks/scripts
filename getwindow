@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu'
+fi
+
+herbstclient bring $(wmctrl -l | $DMENU -p Windows -l 5 | awk '{print $1}')
