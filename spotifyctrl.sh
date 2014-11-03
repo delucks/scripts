@@ -9,15 +9,18 @@ ARTIST=$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpri
 case "$1" in
 	toggle)
 		$TOGGLE
+		~/scripts/dvol show
 		;;
 	stop)
 		$STOP
 		;;
 	prev)
 		$PREV
+		~/scripts/dvol show
 		;;
 	next)
 		$NEXT
+		~/scripts/dvol show
 		;;
 	*)
 		echo "You goofed"

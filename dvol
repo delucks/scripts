@@ -50,21 +50,23 @@ case "$1" in
     AMIXARG="toggle"
 		IF="Speaker"
     ;;
-  ''|'-h'|'--help')
+  '-h'|'--help')
     usage
     ;;
+	'show')
+		;;
   *)
-    err "Unrecognized option \`$1', see dvol --help"
+    #err "Unrecognized option \`$1', see dvol --help"
     ;;
 esac
 
 #Actual volume changing (readability low)
-AMIXOUT="$(amixer set "$IF" "$AMIXARG" | tail -n 1)"
+AMIXOUT="$(amixer set "$IF" "$AMIXARG")"
 MUTE="$(cut -d '[' -f 4 <<<"$AMIXOUT")"
 if [ "$MUTE" = "off]" ]; then
   VOL="0"
 else
-  VOL="$(cut -d '[' -f 2 <<<"$AMIXOUT" | sed 's/%.*//g')"
+  VOL="$(amixer get Master | tail -n1 | cut -d '[' -f 2 | sed 's/%.*//g')"
 fi
 
 #Using named pipe to determine whether previous call still exists
