@@ -5,9 +5,6 @@ from bs4 import BeautifulSoup
 import argparse
 from urlparse import urljoin
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36"
-headers = {'User-Agent': USER_AGENT}
-
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("page",type=str,help="First argument: the url to validate")
