@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -f ~/.dmenurc ]; then
+	. ~/.dmenurc
+else
+	DMENU='dmenu -i'
+fi
+
+WS="$(cat ~/.dirhist | $DMENU -p 'Open Directory:')"
+
+if grep -q "$WS" ~/.dirhist ; then
+	echo "Exists in history"
+else
+	echo $WS >> ~/.dirhist
+fi
+
+[ "$WS" ] && urxvt -e zsh -c "ranger $WS"
