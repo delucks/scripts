@@ -1,0 +1,15 @@
+#!/bin/bash
+XRES="~/.colorsX"
+OTHER="~/.colors"
+rm .tmp 2>&1 >/dev/null
+for item in ~/dotfiles/colors/*.colorsX
+do
+	echo "$item" | sed -e 's/\/home\/jamie\/dotfiles\/colors\///g' -e 's/\.colorsX//g' >> .tmp
+done
+CHOICE=$(cat .tmp | dmenu)
+echo $CHOICE
+rm ~/.colors
+rm ~/.colorsX
+ln -s /home/jamie/dotfiles/colors/$CHOICE.colors /home/jamie/.colors
+ln -s /home/jamie/dotfiles/colors/$CHOICE.colorsX /home/jamie/.colorsX
+xrdb -merge ~/.Xresources
