@@ -1,6 +1,7 @@
 #!/bin/env python2
 from bs4 import BeautifulSoup
 import requests
+from ParserCommon import docurl
 import argparse
 
 # these are the only ones I care about, if you want more add them yourself
@@ -10,7 +11,7 @@ BASEURL="https://delaware.craigslist.org"
 # defaults to tab, change this if you think you're gonna get dirty input. was a comma, but turns out lots of titles use commas
 SEPARATOR=u'	'
 # set your useragent. this one is a default mac running chrome, so 50% of people
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36"
+USER_AGENT = "python craigslist searcher"
 headers = {'User-Agent': USER_AGENT}
 
 # scrape a page of craigslist

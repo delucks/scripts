@@ -9,17 +9,21 @@ ARTIST=$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpri
 case "$1" in
 	toggle)
 		$TOGGLE
+		mpc toggle
 		~/scripts/dvol show
 		;;
 	stop)
 		$STOP
+		mpc stop
 		;;
 	prev)
 		$PREV
+		mpc prev
 		~/scripts/dvol show
 		;;
 	next)
 		$NEXT
+		mpc next
 		~/scripts/dvol show
 		;;
 	*)
