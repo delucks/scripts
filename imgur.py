@@ -3,8 +3,7 @@ from bs4 import BeautifulSoup
 import sys
 from urllib import urlretrieve
 import os
-
-# this script is shitty hack level. don't expect it to be friendly or error-tolerant.
+import argparse
 
 # helper
 def getimage(img,outfolder):
@@ -21,4 +20,19 @@ def main(url,outfolder):
     print href
     getimage(href,outfolder)
 
-main(sys.argv[1],sys.argv[2])
+p = argparse.ArgumentParser(description="download an entire imgur album to the folder of your choice")
+p.add_argument("album", help="the link to the imgur album, e.g. https://imgur.com/a/jv4jO")
+p.add_argument("directory", help="optionally, the directory to save all files to. If not given, it will default to the title of the album", nargs="?")
+args = p.parse_args()
+
+if args.directory is None:
+  r = requests.get(args.album)
+  s = BeautifulSoup(r.text)
+  destdir = s.title.text.strip()
+else:
+  destdir = args.directory
+
+if not os.path.isdir(destdir):
+  os.mkdir(destdir)
+
+main(args.album,destdir)
