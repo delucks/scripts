@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ -f ~/.dmenurc ]; then
-	. ~/.dmenurc
-else
-	DMENU='dmenu -i'
-fi
-
-~/Scripts/tmux_open $(~/Scripts/lpath | $DMENU -p 'Open in tmux:')

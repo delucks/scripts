@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Part of my tmux suite. The first one actually.
-
-tmux set-option -og -t$(tmux list-sessions | grep attached | cut -c1) base-index 1
-tmux new-window -t$(tmux list-sessions | grep attached | cut -c1) $@
