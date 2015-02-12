@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 # usage: python2 linkvalidate.py http://my.cool.website.com
 from ParserCommon import docurl
 from bs4 import BeautifulSoup

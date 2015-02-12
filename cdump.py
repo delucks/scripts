@@ -5,7 +5,7 @@ from ParserCommon import docurl
 import argparse
 
 # these are the only ones I care about, if you want more add them yourself
-BOARDLIST=['sya','bia','bka','bfa','ppa','cla','ela','gra','msa','pha','vga']
+BOARDLIST=['fua','sya','bia','bka','bfa','ppa','cla','ela','gra','msa','pha','vga']
 # your location here
 BASEURL="https://delaware.craigslist.org"
 # defaults to tab, change this if you think you're gonna get dirty input. was a comma, but turns out lots of titles use commas
