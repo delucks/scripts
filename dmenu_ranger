@@ -6,7 +6,7 @@ else
 	DMENU='dmenu -i'
 fi
 
-WS="$(cat ~/.dirhist | $DMENU -p 'Open Directory:')"
+WS="$(cat ~/.dirhist | $DMENU -p 'dir$ ')"
 
 if grep -q "$WS" ~/.dirhist ; then
 	echo "Exists in history"

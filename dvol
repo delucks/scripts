@@ -75,6 +75,8 @@ if [ ! -e "$PIPE" ]; then
   mkfifo "$PIPE"
   (dzen2 -l 1 -x "$XPOS" -y "$YPOS" -w "$WIDTH" -fn "$FONT" -bg "$BG" -fg "$FG" -e 'onstart=uncollapse' < "$PIPE" 
    rm -f "$PIPE") &
+else
+	rm -f "$PIPE"
 fi
 
 # Feed the pipe!
@@ -89,5 +91,5 @@ fi
 if [[ $STR == "" ]]; then
 	STR="Volume"
 fi
-STR="$(amixer get Speaker | awk '{print $7}' | tail -n1) $STR"
+STR="$(amixer get Master | tail -n1 | awk '{print $NF}') $STR"
 (echo "$STR" ; echo "$VOL" | gdbar -w "$WIDTH" -fg "$FG" -bg "$BG" ; sleep "$SECS") > "$PIPE"
