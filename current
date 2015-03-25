@@ -1,0 +1,6 @@
+#!/bin/bash
+bat=$(acpi|tr ' ' '\n' | grep '%' | tr ',' ' ')
+time=$(date +%R)
+addr=$(ip addr show dev wlp3s0 scope global | grep inet | awk '{print $2}')
+bright=$(cat /sys/class/backlight/intel_backlight/brightness)
+notify-send -u low Current "Battery: $bat\nTime: $time\nBrightness: $bright\nAddr: $addr"

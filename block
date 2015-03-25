@@ -1,5 +1,15 @@
 #!/bin/bash
 
-scrot /tmp/screenshot.png
-convert /tmp/screenshot.png -blur 0x5 /tmp/screenshotblur.png
-i3lock -i /tmp/screenshotblur.png
+FILE="/tmp/screenshot.png"
+BLUR="/tmp/screenshotblur.png"
+if [ -f $FILE ];
+then
+  rm "$FILE"
+fi
+if [ -f $BLUR ];
+then
+  rm "$BLUR"
+fi
+scrot "$FILE"
+convert "$FILE" -blur 0x5 "$BLUR"
+i3lock -i "$BLUR"
