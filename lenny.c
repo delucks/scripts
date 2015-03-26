@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+//because, that's why
 int main(int argc, char* argv[])
 {
   //default lennyface
@@ -8,15 +9,27 @@ int main(int argc, char* argv[])
     printf("( ͡° ͜ʖ ͡°)\n");
   else
   {
-    //example for adding more option arguments
-    if (strcmp(argv[1],"-o") == 0)
+    //specific ones
+    if (strcmp(argv[1],"-t") == 0)
     {
-      printf("( ͡o ͜ʖ ͡o)\n");
+      printf("(╯°□°）╯︵ ┻━┻\n");
+    }
+    else if (strcmp(argv[1],"-s") == 0)
+    {
+      printf("¯\\_(ツ)_/¯\n");
+    }
+    else if (strcmp(argv[1],"-d") == 0)
+    {
+      printf("ಠ_ಠ\n");
+    }
+    else if (strcmp(argv[1],"-T") == 0)
+    {
+      printf("(ノಠ益ಠ)ノ彡┻━┻\n");
     }
     //or just format lennyface with your character here
     else if (strlen(argv[1]) == 1)
     {
-      printf("( ͡%c ͜ʖ%c ͡)\n",argv[1][0],argv[1][0]);
+      printf("( ͡%c ͜ʖ ͡%c)\n",argv[1][0],argv[1][0]);
     }
   }
   return 0;
