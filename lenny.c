@@ -14,6 +14,10 @@ int main(int argc, char* argv[])
     {
       printf("(╯°□°）╯︵ ┻━┻\n");
     }
+    else if (strcmp(argv[1],"-m") == 0)
+    {
+      printf("⊂(・(ェ)・)⊃\n");
+    }
     else if (strcmp(argv[1],"-s") == 0)
     {
       printf("¯\\_(ツ)_/¯\n");
