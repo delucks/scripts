@@ -4,6 +4,7 @@ A bunch of one-off scripts and ones vital to the operation of my custom desktop 
 
 ## Python
 
+* Lsim.py: Encode/decode from the L-language used by Computational Theory (WIP)
 * x86.py: Dump instruction information from the official Intel reference
 * cdump.py: Dump pages of posts from craigslist so you can grep them
 * linkvalidate.py: Print out the return codes of all the links on a certain HTTP site.
@@ -23,3 +24,8 @@ A bunch of one-off scripts and ones vital to the operation of my custom desktop 
 * digdug.sh: Draw a dig-dug dude in full color
 * dvol: Super hacky volume control & notification script, integrated with Spotify
 * jgit-3.5.sh: Not written by me (duh), a shell executable git binary. Good for those pesky servers which don't have git installed
+
+## Other
+
+* lenny.c: ( ͡° ͜ʖ ͡°)
+* insultbot.pl: I grokked some perl and made this

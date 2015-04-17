@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import re
 import sys
+import term_escapes as c
 '''
 encoder for L-languages
 Only matches the most basic language features:
@@ -26,7 +27,7 @@ with open(inpath, 'r') as f:
     raw_prg = [line for line in f.readlines() if not line.startswith('#')]
 
 variables = []
-labels = ['E'] # include E because indexing here starts at 1
+labels = []
 
 # pass it a .split()'d string
 def getlabel(input_tokens):
@@ -53,35 +54,34 @@ for item in raw_prg:
         if var_tok not in variables:
             variables.append(var_tok)
 
-'''
-should probably have the true index of lbls in the list
-then just bump it up when encoding/returning it
-we can put E nowhere, and put the var encoding of those to inf
-'''
 encodings = []
-# second pass, goedel encoding phase
+# second pass, pairing phase
 for item in raw_prg:
-    # pull out its label number
     tokens = item.split()
     plbl = getlabel(tokens)
     lbl_idx = 0
-    if plbl is not None:
-        lbl_idx = labels.index(plbl)
-        tokens = tokens[1:]
-    # pull out the encoding of var used
-    if tokens[0].lower() == 'if':
-        inst_type = labels.index(tokens[-1]) + 2 # dest lbl idx + 2
+    if plbl is not None: # there is a label!
+        if plbl == 'E': # bad, bad programmer
+            print '{d}[ERR] Next instruction\'s label is \'E\'{s}'.format(d=c.get_color('red'),s=c.get_color('reset'))
+        else:
+            lbl_idx = labels.index(plbl) + 1 # otherwise assign it the correct index
+        tokens = tokens[1:] # strip out the label for further work
+    if tokens[0].lower() == 'if': # check for a conditional goto
+        try:
+            inst_type = labels.index(tokens[-1]) + 3 # dest lbl idx + 2 + 1 (for human-encoding)
+        except ValueError, e:
+            print '{d}[ERR] Next goto\'s label doesn\'t exist!\n[ERR] {m}{s}'.format(d=c.get_color('red'),s=c.get_color('reset'),m=e.message)
+            inst_type = 0 # poor goto :(
         var_idx = variables.index(tokens[1]) # pull out the var
-    else:
+    else: # we've got either an arithmetic or a direct assignment
         var_idx = variables.index(tokens[0])
         joined = ' '.join(tokens).strip()
         inst_type = 0
         if arith_reg.match(joined):
             inst_type = 1 if (tokens[-2] is '+') else 2
-    print item.strip()
-    print 'label: %s, var_idx: %s, instr: %s' % (lbl_idx, var_idx, inst_type)
-    # pull out type of inst
-    # call pair(...,pair(...,...)), append to encodings
-    encodings.append(pair(lbl_idx,pair(inst_type,var_idx)))
+    print c.get_color('green') + item.strip() + c.get_color('reset')
+    paired = pair(lbl_idx,pair(inst_type,var_idx))
+    print '<%s, <%s, %s>> = %s' % (lbl_idx, inst_type, var_idx, paired) # check out dem pairing functions
+    encodings.append(paired)
 
 # pass encodings to goedel()
