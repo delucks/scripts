@@ -31,6 +31,10 @@ int main(int argc, char* argv[])
     {
       printf("( ͡%c ͜ʖ ͡%c)\n",argv[1][0],argv[1][0]);
     }
+    else
+    {
+      printf("( ͡%s ͜ʖ ͡%s)\n",argv[1],argv[1]);
+    }
   }
   return 0;
 }
