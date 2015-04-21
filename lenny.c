@@ -30,6 +30,14 @@ int main(int argc, char* argv[])
     {
       printf("(ノಠ益ಠ)ノ彡┻━┻\n");
     }
+    else if(strcmp(argv[1], "-Z") == 0)
+    { //happy laying down
+      printf("_(：3 」∠ )_\n");
+    }
+    else if(strcmp(argv[1], "-p") == 0)
+    { //poking someone
+      printf("(*・)σσσ(*゜Д゜*)\n"); 
+    }
     //or just format lennyface with your character here
     else if (strlen(argv[1]) == 1)
     {
