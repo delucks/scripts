@@ -4,6 +4,7 @@ import re
 from urlparse import urljoin
 import logging
 import sys
+import os
 
 # install these
 import mechanize
@@ -41,24 +42,25 @@ class SakaiUtil(object):
 
     '''
     Checks the Sakai main page for all classes you're enrolled in
+    Returns a dictionary of ID to class names
     '''
     def get_classes(self):
         self.br.open(self.baseurl)
         soup = BeautifulSoup(self.br.response().read())
-        class_uids = []
+        class_uids = {}
         for item in soup.find_all('a', role='menuitem'):
             link = item.get('href')
             if self.class_url_re.match(link):
-                class_uids.append(link.split('/')[-1])
+                class_uids[link.split('/')[-1]] = item.get('title')
         return class_uids
 
     '''
     Retrieves a remote url to a local path
     '''
     def download_file(self, url, path):
-        logging.debug('Downloading {u} to {p}'.format(u=url,p=path))
+        logging.info('Downloading {u} to {p}'.format(u=url,p=path))
         with open(path,'wb') as f:
-            remote = self.br.urlopen(url)
+            remote = self.br.open(url)
             f.write(remote.read())
 
     '''
@@ -95,21 +97,41 @@ class SakaiUtil(object):
             self.br.submit()
         return self.list_files(url)
 
+    def bulk_download(self, class_uid):
+        if not os.path.exists('down/'):
+            os.mkdir('down/')
+        external_urls = []
+        for hyperlink in self.get_files_for_class(class_uid):
+            if hyperlink.endswith('.URL'):
+                external_urls.append(hyperlink) # TODO: Decode this into a pure hyperlink
+                continue
+            filename = hyperlink.split('/')[-1]
+            filepath = os.path.join('down/',filename)
+            self.download_file(hyperlink, filepath)
+        with open('down/links.txt','wb') as f:
+            for item in external_urls:
+                f.write(item + '\n')
+
 '''
 Interactive use
 '''
 def main():
     import argparse
-    logging.basicConfig(format='%(asctime)s:%(filename)s:%(levelname)s:%(message)s', stream=sys.stderr, level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s:%(filename)s:%(levelname)s:%(message)s', stream=sys.stderr, level=logging.INFO)
     p = argparse.ArgumentParser(description='work with sakai sites')
+    p.add_argument('user', help='username to log in with')
+    p.add_argument('password', help='password to the above user')
     p.add_argument('-s', '--sakai', help='the base url of the sakai site', default='https://sakai.udel.edu/portal')
-    p.add_argument('-u', '--user', help='username')
-    p.add_argument('-p', '--password', help='password')
+    p.add_argument('-d', '--download', help='a class\' ID to download')
     args = p.parse_args()
     su = SakaiUtil(eid=args.user, pw=args.password, baseurl=args.sakai)
-    su.login()
-    print su.get_classes()
-    #print su.get_files_for_class('020bfd02-8090-4d17-9109-aa98817feeea')
+    if args.download:
+        su.bulk_download(args.download)
+    else: # default is to just print the classes they're enrolled in
+        su.login()
+        enrolled = su.get_classes()
+        for item in enrolled.keys():
+            print '{u}    {n}'.format(n=enrolled[item],u=item)
 
 if __name__=='__main__':
     main()
