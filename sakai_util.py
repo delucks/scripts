@@ -28,6 +28,7 @@ class SakaiUtil(object):
         self.br.set_debug_responses(True)
         self.br.set_handle_robots(False)
         self.br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
+        self.logged_in = False
 
     '''
     Open up the portal site and post the login form with your supplied user ID and password
@@ -38,6 +39,7 @@ class SakaiUtil(object):
         self.br.form['eid'] = self.eid
         self.br.form['pw'] = self.pw
         return_code = self.br.submit()
+        self.logged_in = True
         logging.debug('Logged in with return code {r}'.format(r=return_code))
 
     '''
@@ -95,22 +97,35 @@ class SakaiUtil(object):
             self.br.form['eid'] = self.eid
             self.br.form['pw'] = self.pw
             self.br.submit()
+            self.logged_in = True
         return self.list_files(url)
 
-    def bulk_download(self, class_uid):
-        if not os.path.exists('down/'):
-            os.mkdir('down/')
+    def class_download(self, class_uid, folder='down/'):
+        if not folder.endswith('/'):
+            folder = folder + '/'
+        if not os.path.exists(folder):
+            os.mkdir(folder)
         external_urls = []
         for hyperlink in self.get_files_for_class(class_uid):
             if hyperlink.endswith('.URL'):
                 external_urls.append(hyperlink) # TODO: Decode this into a pure hyperlink
                 continue
             filename = hyperlink.split('/')[-1]
-            filepath = os.path.join('down/',filename)
+            filepath = os.path.join(folder, filename)
             self.download_file(hyperlink, filepath)
-        with open('down/links.txt','wb') as f:
+        with open(folder+'links.txt','wb') as f:
             for item in external_urls:
                 f.write(item + '\n')
+
+    '''
+    Download everything from every class
+    '''
+    def bulk_download(self):
+        if not self.logged_in:
+            self.login()
+        all_user_classes = self.get_classes()
+        for section in all_user_classes.keys():
+            self.class_download(section, folder=all_user_classes[section])
 
 '''
 Interactive use
@@ -123,10 +138,13 @@ def main():
     p.add_argument('password', help='password to the above user')
     p.add_argument('-s', '--sakai', help='the base url of the sakai site', default='https://sakai.udel.edu/portal')
     p.add_argument('-d', '--download', help='a class\' ID to download')
+    p.add_argument('-b', '--bulk', help='download everything from all your classes')
     args = p.parse_args()
     su = SakaiUtil(eid=args.user, pw=args.password, baseurl=args.sakai)
     if args.download:
-        su.bulk_download(args.download)
+        su.class_download(args.download)
+    elif args.bulk:
+        su.bulk_download()
     else: # default is to just print the classes they're enrolled in
         su.login()
         enrolled = su.get_classes()
