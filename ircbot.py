@@ -2,12 +2,27 @@ import irc.bot
 import irc.strings
 from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
 
+'''
+I'm gonna throw all the stupid commands I don't want to leave IRC for here
+'''
 class UtilBot(irc.bot.SingleServerIRCBot):
     def __init__(self, channel, nick, server, port):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nick, nick)
         self.channel = channel
         self.nick = nick
 
+    '''
+    Actual Utility Functions
+    '''
+    def http_title(self, link):
+        import urllib2
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(urllib2.urlopen(link).read())
+        return soup.title.text
+
+    '''
+    IRC Handler Functions
+    '''
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + '_')
     
@@ -22,7 +37,7 @@ class UtilBot(irc.bot.SingleServerIRCBot):
             a = e.arguments[0].split(':', 1)
             if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
                 self.handle_message(e, a[1].strip())
-        else if (e.arguments[0].startswith('!')):
+        elif (e.arguments[0].startswith('!')):
             self.handle_command(e.arguments[0])
 
     def handle_command(self, e, cmd):
@@ -34,25 +49,14 @@ class UtilBot(irc.bot.SingleServerIRCBot):
         self.connection.notice(self.channel, '{n} is talking to me'.format(n=nick))
 
 def main():
-    import sys
-    if len(sys.argv) != 4:
-        print('Usage: testbot <server[:port]> <channel> <nickname>')
-        sys.exit(1)
-
-    s = sys.argv[1].split(":", 1)
-    server = s[0]
-    if len(s) == 2:
-        try:
-            port = int(s[1])
-        except ValueError:
-            print('Error: Erroneous port.')
-            sys.exit(1)
-    else:
-        port = 6667
-    channel = sys.argv[2]
-    nickname = sys.argv[3]
-
-    bot = UtilBot(channel, nickname, server, port)
+    import argparse
+    p = argparse.ArgumentParser(description='IRC bot which does utility functions')
+    p.add_argument('server', help='the server you want the bot to connect to')
+    p.add_argument('channel', help='the channel the bot should join on the server')
+    p.add_argument('-p', '--port', help='specify an alternate port (default 6667)', type=int, default=6667)
+    p.add_argument('-n', '--nick', help='specify an alternate nickname (default utilbot)', default='utilbot')
+    args = p.parse_args()
+    bot = UtilBot(args.channel, args.nick, args.server, args.port)
     bot.start()
 
 if __name__ == '__main__':
