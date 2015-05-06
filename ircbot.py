@@ -1,6 +1,7 @@
 import irc.bot
 import irc.strings
 from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
+import logging
 
 '''
 I'm gonna throw all the stupid commands I don't want to leave IRC for here
@@ -8,8 +9,10 @@ I'm gonna throw all the stupid commands I don't want to leave IRC for here
 class UtilBot(irc.bot.SingleServerIRCBot):
     def __init__(self, channel, nick, server, port):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nick, nick)
+        logging.basicConfig(format='%(asctime)s:%(filename)s:%(levelname)s:%(message)s', stream=sys.stderr, level=logging.INFO)
         self.channel = channel
         self.nick = nick
+        self.recent_url = None
 
     '''
     Actual Utility Functions
@@ -33,16 +36,19 @@ class UtilBot(irc.bot.SingleServerIRCBot):
         self.do_command(e, e.arguments[0])
 
     def on_pubmsg(self, c, e):
-        if (self.nick + ':' in e.arguments[0]):
-            a = e.arguments[0].split(':', 1)
-            if len(a) > 1 and irc.strings.lower(a[0]) == irc.strings.lower(self.connection.get_nickname()):
-                self.handle_message(e, a[1].strip())
+        if (e.arguments[0].beginswith(self.nick)):
+            cmd = e.arguments[0].lstrip(self.nick)
+            self.handle_message(e, cmd)
         elif (e.arguments[0].startswith('!')):
-            self.handle_command(e.arguments[0])
+            self.handle_command(e, e.arguments[0].lstrip('!'))
+        elif (e.arguments[0].startswith('http')):
+            self.recent_url = e.arguments[0]
 
     def handle_command(self, e, cmd):
         nick = e.source.nick
-        self.connection.notice(self.channel, '{n} tried to issue {c}'.format(n=nick,c=cmd))
+        logging.info(self.channel, '{n} tried to issue {c}'.format(n=nick,c=cmd))
+        if (cmd == 'title'):
+            self.connection.notice(self.channel, http_title(recent_url))
 
     def handle_message(self, e, msg):
         nick = e.source.nick
