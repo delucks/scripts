@@ -5,35 +5,29 @@ import Queue
 import logging
 import threading
 import urlparse
+from time import sleep
 
 class LinkSpider(object):
     ''' class which creates a set of in-scope URLs from a domain,
     then performs an action on each
     '''
-    def __init__(self, baseurl, num_threads, limit_domain):
+    def __init__(self, baseurl, num_threads, limit_domain, thread_timeout, req_limit):
         self.baseurl = baseurl
         self.num_threads = num_threads
         self.limit_domain = limit_domain # should we spider inside of the same domain?
         self.q = Queue.Queue()
         self.visited = set()
         self.q.put(self.baseurl)
+        self.thread_timeout = thread_timeout
+        self.req_limit = req_limit
+        self.status_codes = {}
+        self.threads = []
 
     # helper method for setting params in the requests call
     def get_page(self, url, user_agent='https://github.com/delucks/scripts/site_trawl.py'):
         headers = {'User-Agent': user_agent}
+        sleep(self.req_limit)
         return requests.get(url, headers=headers)
-
-    # iterate through and return a dict of response codes
-    # TODO: do this while checking each link
-    def check_resp_code(self, iterable):
-        result = {}
-        for item in iterable:
-            result[item] = self.get_page(item).status_code
-        return result
-
-    # perform actions on an iterable, return a result
-    def action(self, iterable):
-        return self.check_resp_code(iterable)
 
     # check if a particular URL is in the scope of the scan
     def scope_url(self, url):
@@ -68,6 +62,7 @@ class LinkSpider(object):
             return
         self.visited.add(url)
         r = self.get_page(url)
+        self.status_codes[url] = r.status_code
         soup = BeautifulSoup(r.text)
         for link in self.yield_unvisited(soup.find_all('a'), url):
             if self.scope_url(link):
@@ -79,7 +74,7 @@ class LinkSpider(object):
         queue_available = True
         while queue_available:
             try:
-                u = self.q.get(False)
+                u = self.q.get(True, timeout=self.thread_timeout)
                 logging.info('[{i}] processing {u}'.format(i=t_id, u=u))
                 self.page_parse(u)
             except Queue.Empty:
@@ -89,13 +84,12 @@ class LinkSpider(object):
     # main method
     def run(self):
         # start all ya threads
-        threads = []
         for thread_id in range(self.num_threads):
             t = threading.Thread(target=self.worker, args = (thread_id,))
             t.start()
-            threads.append(t)
+            self.threads.append(t)
         # wait for all threads to terminate
-        for item in threads:
+        for item in self.threads:
             item.join()
         return self.visited
 
@@ -107,9 +101,21 @@ if (__name__ == '__main__'):
     import argparse
     p = argparse.ArgumentParser(description='spider a site')
     p.add_argument('url', help='the starting URL for the spider')
+    p.add_argument('-s', '--show-status', help='output status codes of all links', action='store_true')
+    p.add_argument('-u', '--show-urls', help='output all links', action='store_true')
     p.add_argument('-t', '--threads', help='the amount of threads to spawn', type=int, default=3)
+    p.add_argument('-l', '--request-limit', help='delay between thread requests', type=int, default=3)
+    p.add_argument('--thread-timeout', help='time to wait for data', type=int, default=30)
     p.add_argument('--no-domain', help='don\'t limit spidering to the same domain', action='store_true')
     args = p.parse_args()
-    s = LinkSpider(baseurl=args.url, num_threads=args.threads, limit_domain=not args.no_domain)
+    s = LinkSpider(baseurl=args.url,
+        num_threads=args.threads,
+        limit_domain=not args.no_domain,
+        thread_timeout=args.thread_timeout,
+        req_limit=args.request_limit)
     links = s.run()
-    print links
+    for url, code in s.status_codes.iteritems():
+        if args.show_status:
+            print '{u},{c}'.format(u=url, c=code)
+        elif args.show_urls:
+            print url
