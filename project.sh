@@ -76,4 +76,4 @@ EOF
 ) > ".gitignore"
 
 echo 'Running `nosetests` to check your progress!'
-nosetests
+nosetests2
