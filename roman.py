@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
-# Roman Numeral Engine, by jluck in a bored evening
+# Roman Numeral Engine, by delucks
+# I learned python like this
 import argparse
 
 def encode(value):
@@ -48,20 +49,15 @@ def encode(value):
 	return ''.join(final)
 
 def value(c):
-	if (c == 'I'):
-		return 1
-	elif (c == 'V'):
-		return 5
-	elif (c == 'X'):
-		return 10
-	elif (c == 'L'):
-		return 50
-	elif (c == 'C'):
-		return 100
-	elif (c == 'D'):
-		return 500
-	elif (c == 'M'):
-		return 1000
+    numerals = {'I': 1,
+            'V': 5,
+            'X': 10,
+            'L': 50,
+            'C': 100,
+            'D': 500,
+            'M': 1000,
+            }
+    return numerals[c]
 
 def decode(numeral):
 	final = 0
