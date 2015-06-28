@@ -24,7 +24,7 @@ class LinkSpider(object):
         self.threads = []
 
     # helper method for setting params in the requests call
-    def get_page(self, url, user_agent='https://github.com/delucks/scripts/site_trawl.py'):
+    def get_page(self, url, user_agent='https://github.com/delucks/scripts/blob/master/site_trawl.py'):
         headers = {'User-Agent': user_agent}
         sleep(self.req_limit)
         return requests.get(url, headers=headers)
@@ -100,12 +100,12 @@ if (__name__ == '__main__'):
         level=logging.INFO)
     import argparse
     p = argparse.ArgumentParser(description='spider a site')
-    p.add_argument('url', help='the starting URL for the spider')
+    p.add_argument('url', help='the starting link for the spider')
     p.add_argument('-s', '--show-status', help='output status codes of all links', action='store_true')
     p.add_argument('-u', '--show-urls', help='output all links', action='store_true')
     p.add_argument('-t', '--threads', help='the amount of threads to spawn', type=int, default=3)
     p.add_argument('-l', '--request-limit', help='delay between thread requests', type=int, default=3)
-    p.add_argument('--thread-timeout', help='time to wait for data', type=int, default=30)
+    p.add_argument('--thread-timeout', help='time to wait for data', type=int, default=60)
     p.add_argument('--no-domain', help='don\'t limit spidering to the same domain', action='store_true')
     args = p.parse_args()
     s = LinkSpider(baseurl=args.url,
