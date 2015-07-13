@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ -f ~/.dmenurc ]; then
-	. ~/.dmenurc
-else
-	DMENU='dmenu -i'
-fi
-
-sudo netctl list | $DMENU | sed 's/..\(.*\)/\1/g' | xargs sudo netctl swap
