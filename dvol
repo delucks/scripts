@@ -62,6 +62,7 @@ esac
 
 #Actual volume changing (readability low)
 AMIXOUT="$(amixer set "$IF" "$AMIXARG")"
+pkill -RTMIN+10 i3blocks # play nice
 MUTE="$(cut -d '[' -f 4 <<<"$AMIXOUT")"
 if [ "$MUTE" = "off]" ]; then
   VOL="0"

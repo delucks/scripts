@@ -1,61 +1,89 @@
 #!/usr/bin/python2
-import requests
 from bs4 import BeautifulSoup
 
-import sys
+import time
+import urllib2
 from urllib import urlretrieve
 import os
 import argparse
 import threading
 import Queue
 
-# helper
-def getimage(img, outfolder):
+'''
+downloads an image to a folder, if it doesn't already exist
+'''
+def get_image(img, outfolder):
     # give it the http:// link as img, and folder to save to as outfolder
     filename = img.split('/')[-1]
     outpath = os.path.join(outfolder,filename)
-    urlretrieve(img, outpath)
+    if not os.path.isfile(outpath): # doesn't check if the file is whole, meh
+        print 'Downloading {} to {}'.format(img, outfolder)
+        urlretrieve(img, outpath)
 
-def thread_helper(thread_id, queue, outfolder):
+'''
+repeatedly calls get_image() on a queue
+'''
+def thread_helper(thread_id, queue):
     queue_available = True
     while queue_available:
         try:
-            href = queue.get(True)
-            print 'Thread {} {}'.format(thread_id, href)
-            getimage(href, outfolder)
+            href, outfolder = queue.get()
+            print 'Thread {}: {} to {}'.format(thread_id, href, outfolder)
+            get_image(href, outfolder)
+            queue.task_done()
         except Queue.Empty:
-            print 'Thread {} finished'.format(thread_id)
             queue_available = False
 
-def main(url, outfolder, num_threads):
-    r = requests.get(url)
-    q = Queue.Queue()
-    soup = BeautifulSoup(r.text)
+'''
+grabs all img links of an album, adds to thread queue
+'''
+def enqueue(url, outfolder, queue):
+    # setup
+    print 'Queueing all images from {}'.format(url)
+    USER_AGENT = 'imgur downloader (https://github.com/delucks/scripts/blob/master/imgur.py)'
+    headers = {'User-Agent': USER_AGENT}
+    r = urllib2.Request(url, None, headers)
+    soup = BeautifulSoup(urllib2.urlopen(r).read())
+    # folder handling
+    if outfolder is None:
+        album_title = str(soup.title.text.strip())
+        #if album_title.endswith('- Album on Imgur'):
+        #    album_title = album_title[:-16].strip() # strip off album text
+        outfolder = album_title.translate(None, '/')
+    if not os.path.isdir(outfolder):
+        os.mkdir(outfolder)
+    # pulling out the image links
+    img_links = []
     for item in soup.find_all('img','thumb-title'):
         href = 'https:' + item.get('data-src')[:-5] + '.jpg'
-        q.put(href)
-    threads = []
-    for item in range(num_threads):
-        t = threading.Thread(target=thread_helper, args = (item, q, outfolder))
+        queue.put((href, outfolder))
+
+'''
+launches a team of threads to attack the queue
+'''
+def main(queue, num_threads):
+    # launch a thread pool
+    for thread_id in range(num_threads):
+        t = threading.Thread(target=thread_helper, args = (thread_id, queue))
+        t.setDaemon(True)
         t.start()
-        threads.append(t)
-    for item in threads:
-        item.join()
 
 p = argparse.ArgumentParser(description='download an entire imgur album to the folder of your choice')
-p.add_argument('album', help='the link to the imgur album, e.g. https://imgur.com/a/jv4jO')
+group = p.add_mutually_exclusive_group(required=True)
+group.add_argument('-a', '--album', help='the link to the imgur album, e.g. https://imgur.com/a/jv4jO')
+group.add_argument('-l', '--album-list', help='a file containing a list of albums to download. all will be put in the same dir')
+p.add_argument('-t', '--threads', help='number of threads to run', type=int, default=1)
 p.add_argument('directory', help='optionally, the directory to save all files to. If not given, it will default to the title of the album', nargs='?')
-p.add_argument('-t', '--threads', help='number of threads to run', type=int, default=4)
 args = p.parse_args()
 
-if args.directory is None:
-    r = requests.get(args.album)
-    s = BeautifulSoup(r.text)
-    destdir = s.title.text.strip()
-else:
-    destdir = args.directory
+q = Queue.Queue() 
+if args.album_list is not None:
+    with open(args.album_list, 'r') as f:
+        album_list = f.readlines()
+        for item in album_list:
+            enqueue(item, args.directory, q)
+else: # args.album
+    enqueue(args.album, args.directory, q)
 
-if not os.path.isdir(destdir):
-    os.mkdir(destdir)
-
-main(args.album, destdir, num_threads=args.threads)
+main(q, args.threads)
+q.join() # wait for the queue to be empty
