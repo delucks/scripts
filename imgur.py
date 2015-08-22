@@ -1,13 +1,17 @@
 #!/usr/bin/python2
 from bs4 import BeautifulSoup
 
+import base64
 import time
 import urllib2
-from urllib import urlretrieve
+import urllib
 import os
 import argparse
 import threading
 import Queue
+
+# required for image uploading! fill in with yers
+IMGUR_API_KEY = ''
 
 '''
 downloads an image to a folder, if it doesn't already exist
@@ -18,7 +22,7 @@ def get_image(img, outfolder):
     outpath = os.path.join(outfolder,filename)
     if not os.path.isfile(outpath): # doesn't check if the file is whole, meh
         print 'Downloading {} to {}'.format(img, outfolder)
-        urlretrieve(img, outpath)
+        urllib.urlretrieve(img, outpath)
 
 '''
 repeatedly calls get_image() on a queue
@@ -68,10 +72,18 @@ def main(queue, num_threads):
         t.setDaemon(True)
         t.start()
 
+def upload(local_path, api_key):
+    img_data = base64.b64encode(open(local_path,'rb').read())
+    data = urllib.urlencode({'key':api_key, 'image':urllib.quote(img_data)})
+    site = urllib2.Request('http://imgur.com/api/upload.json', data)
+    s = urllib2.urlopen(site)
+    return s.read()
+
 p = argparse.ArgumentParser(description='download an entire imgur album to the folder of your choice')
 group = p.add_mutually_exclusive_group(required=True)
 group.add_argument('-a', '--album', help='the link to the imgur album, e.g. https://imgur.com/a/jv4jO')
 group.add_argument('-l', '--album-list', help='a file containing a list of albums to download. all will be put in the same dir')
+group.add_argument('-u', '--upload', help='upload a local file to imgur')
 p.add_argument('-t', '--threads', help='number of threads to run', type=int, default=1)
 p.add_argument('directory', help='optionally, the directory to save all files to. If not given, it will default to the title of the album', nargs='?')
 args = p.parse_args()
@@ -82,8 +94,14 @@ if args.album_list is not None:
         album_list = f.readlines()
         for item in album_list:
             enqueue(item, args.directory, q)
-else: # args.album
+elif args.album is not None:
     enqueue(args.album, args.directory, q)
+else: # args.upload
+    if IMGUR_API_KEY is not '':
+        upload(args.upload, IMGUR_API_KEY)
+    else:
+        print 'You must fill out the IMGUR_API_KEY variable inside of source, line 14'
+        os.sys.exit(1)
 
 main(q, args.threads)
 q.join() # wait for the queue to be empty

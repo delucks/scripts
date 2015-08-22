@@ -7,7 +7,7 @@ if [[ $# -gt 0 ]];then
 		DIRTY=1
 	fi
 else
-	DIRTY=1
+	DIRTY=0
 fi
 esc=""
 redf="${esc}[31m";
