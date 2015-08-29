@@ -103,5 +103,7 @@ else: # args.upload
         print 'You must fill out the IMGUR_API_KEY variable inside of source, line 14'
         os.sys.exit(1)
 
+start_time = time.clock()
 main(q, args.threads)
 q.join() # wait for the queue to be empty
+print 'Elapsed: {}'.format(time.clock() - start_time)
