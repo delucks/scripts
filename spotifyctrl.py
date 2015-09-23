@@ -20,7 +20,7 @@ class SpotifyController(object):
     def stop(self):
         self.player.Stop()
 
-    def prev(self):
+    def previous(self):
         self.player.Previous()
 
     def next(self):
