@@ -7,8 +7,8 @@ STATE=`xinput list-props $ID|grep 'Device Enabled'|awk '{print $4}'`
 if [ $STATE -eq 1 ]
 then
     xinput disable $ID
-    #echo "Touchpad disabled."
+    notify-send -u normal -t 10 -a "$0" "$0" "Touchpad disabled"
 else
     xinput enable $ID
-    #echo "Touchpad enabled."
+    notify-send -u normal -t 10 -a "$0" "$0" "Touchpad enabled"
 fi
