@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 bat=$(acpi|tr ' ' '\n' | grep '%' | tr ',' ' ')
 stat=$(acpi | tr ' ' '\n'  | grep , | grep -v % | sed 's/,//g')
 time=$(date +%R)

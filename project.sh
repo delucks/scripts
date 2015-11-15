@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # frame out a python project as laid out in "Learn Python the Hard Way"
 # run from the project directory ('skeleton' in LPtHW example), this will create necessary module/test subfolders

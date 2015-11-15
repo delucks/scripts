@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
 from bs4 import BeautifulSoup
 
 import base64

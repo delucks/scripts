@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # standard lib
 import cookielib
 import re
