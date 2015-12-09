@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
 import sys
 
 count = {}
@@ -10,5 +10,5 @@ with open(sys.argv[1]) as f:
       else:
         count[char] = 1
 
-for item in count.keys():
-  print "{key} {val}".format(key=item,val=count[item])
+for key, val in count.iteritems():
+  print "{key} {val}".format(key=key,val=val)
