@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
 # usage: python2 linkvalidate.py http://my.cool.website.com
 import requests
 from bs4 import BeautifulSoup

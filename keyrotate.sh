@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to robotically add a new ssh key to every host in your ~/.ssh/config
 # Caution: This script is potentially destructive. Use at your own risk

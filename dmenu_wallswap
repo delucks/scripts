@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 XRES="~/.colorsX"
 OTHER="~/.colors"
 rm .tmp 2>&1 >/dev/null

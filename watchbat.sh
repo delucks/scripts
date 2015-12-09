@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 ADDR=$1
 HOST=$(uname -n)
 BATLVL=$(acpi -b | awk '{print $4}' | tr '{%,}' ' ')

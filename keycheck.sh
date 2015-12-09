@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check if an RSA key exists on all hosts in your ~/.ssh/config
 

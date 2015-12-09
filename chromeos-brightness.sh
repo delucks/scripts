@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Poll the brightness on a Samsung Chromebook, raise and lower
 

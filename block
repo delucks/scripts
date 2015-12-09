@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 FILE="/tmp/screenshot.png"
 BLUR="/tmp/screenshotblur.png"
