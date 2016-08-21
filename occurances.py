@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''command-with-stdout.py | ./occurances.py [options] [<method>] [<input file>] [<output file>]
+'''<whatever> | ./occurances.py [options] [<method>] [<input>] [<output>]
 
 perform basic statistics on input
 like "sort | uniq -c | sort -nr" by default
@@ -50,7 +50,9 @@ class Methods:
         for item, count in stats.c.items():
             if item in string.whitespace:
                 item = repr(item).replace("'", '')
-            yield '{}{d}{}{d}{}%'.format(item, count, round(count/total*100, precision), d=delimiter)
+            yield '{}{d}{}{d}{}%'.format(
+                item, count, round(count / total * 100, precision), d=delimiter
+            )
         if header:
             yield 'Count{d}Term{d}Percent'.format(d=delimiter)
 
@@ -63,7 +65,7 @@ class Methods:
             yield '{}{d}{}{d}{}'.format(idx, len(line), line, d=delimiter)
         if header:
             yield 'Row{d}Length{d}Contents'.format(d=delimiter)
-            yield 'The passed in text is {} lines by {} characters maximum'.format(idx+1, lengthiest)
+            yield 'Text is {} by {} chars max'.format(idx + 1, lengthiest)
 
     def character_count(stats, delimiter, header):
         # character frequency
@@ -81,9 +83,9 @@ class Stats:
         self.c = Counter()
         for line in body.splitlines():
             if strip:
-               self.c[line.strip()] += 1 
+                self.c[line.strip()] += 1
             else:
-               self.c[line] += 1 
+                self.c[line] += 1
         self.text = body
 
 
@@ -96,15 +98,28 @@ def main():
         'word': Methods.word_count,
     }
     p = argparse.ArgumentParser(__doc__)
-    p.add_argument('method', choices=methods.keys(), help='what information to display', default='count', nargs='?')
-    p.add_argument('infile', nargs='?', type=argparse.FileType('r'), default=sys.stdin, help='specify a file to read from (defaults to stdin)')
-    p.add_argument('outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout, help='specify a file to write to (defaults to stdout)')
-    p.add_argument('--header', help='print a header describing the columns along with the output', action='store_true')
-    p.add_argument('-r', '--reverse', help='reverse the sort order', action='store_true')
-    p.add_argument('-s', '--strip', help='strip all whitespace from each line before passing', action='store_true')
-    p.add_argument('--delimiter', help='string to print between fields', default=' ')
+    p.add_argument(
+        'method', nargs='?', default='count', choices=methods.keys(),
+        help='what transformation to perform on the input text')
+    p.add_argument(
+        'infile', nargs='?', default=sys.stdin, type=argparse.FileType('r'),
+        help='specify a file to read from (defaults to stdin)')
+    p.add_argument(
+        'outfile', nargs='?', default=sys.stdout, type=argparse.FileType('w'),
+        help='specify a file to write to (defaults to stdout)')
+    p.add_argument(
+        '--header', action='store_true',
+        help='print a header describing the columns along with the output')
+    p.add_argument(
+        '-r', '--reverse', action='store_true',
+        help='reverse the sort order')
+    p.add_argument(
+        '-s', '--strip', action='store_true',
+        help='strip all whitespace from each line before parsing')
+    p.add_argument(
+        '--delimiter', default=' ',
+        help='string to print between fields')
     args = p.parse_args()
-
     s = Stats(args.infile.read(), args.strip)
     output_gen = methods[args.method](s, args.delimiter, args.header)
     output_lines = output_gen if args.reverse else reversed(list(output_gen))
