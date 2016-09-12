@@ -1,8 +1,0 @@
-#!/usr/bin/env sh
-if [ -f ~/.dmenurc ]; then
-	. ~/.dmenurc
-else
-	DMENUR='dmenu_run'
-fi
-
-$DMENUR -p "$(uname -n)$"

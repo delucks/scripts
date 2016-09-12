@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-#Customize this stuff
-IF="Master"
-SECS="1"
+source $(dirname $0)/common.sh
+x11::parsecolors
 
+#Customize this stuff
+IF="Speaker"
+SECS="1"
 FONT="-aaron-bitocra13-*-*-normal-*-*-*-*-*-*-*-*-*"
-# FONT="Ubuntu"
-. ~/.colors
-BG="$COLOR16"
-FG="$COLOR17"
+BG="$color16"
+FG="$color17"
 XPOS="835"
 YPOS="530"
 WIDTH="500"
@@ -67,7 +67,7 @@ MUTE="$(cut -d '[' -f 4 <<<"$AMIXOUT")"
 if [ "$MUTE" = "off]" ]; then
   VOL="0"
 else
-  VOL="$(amixer get Master | tail -n1 | cut -d '[' -f 2 | sed 's/%.*//g')"
+  VOL="$(amixer get $IF | tail -n1 | cut -d '[' -f 2 | sed 's/%.*//g')"
 fi
 
 #Using named pipe to determine whether previous call still exists
@@ -92,5 +92,5 @@ fi
 if [[ $STR == "" ]]; then
 	STR="Volume"
 fi
-STR="$(amixer get Master | tail -n1 | awk '{print $NF}') $STR"
+STR="$(amixer get $IF | tail -n1 | awk '{print $NF}') $STR"
 (echo "$STR" ; echo "$VOL" | gdbar -w "$WIDTH" -fg "$FG" -bg "$BG" ; sleep "$SECS") > "$PIPE"

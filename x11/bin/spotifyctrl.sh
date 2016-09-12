@@ -10,24 +10,18 @@ ARTIST=$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpri
 case "$1" in
 	toggle)
 		$TOGGLE
-		mpc toggle
-		~/scripts/dvol show
 		;;
 	stop)
 		$STOP
-		mpc stop
 		;;
 	prev)
 		$PREV
-		mpc prev
-		~/scripts/dvol show
 		;;
 	next)
 		$NEXT
-		mpc next
-		~/scripts/dvol show
 		;;
 	*)
-		echo "You goofed"
+    echo "Incorrect arg $1 passed to $0. Try one of {toggle,stop,prev,next}"
 		exit 1
 esac
+hash dvol 2>/dev/null && dvol show

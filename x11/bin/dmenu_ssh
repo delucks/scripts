@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-source ~/.dmenurc
-
-urxvt -e bash -c "ssh $(cat ~/.ssh/config | egrep '^Host\ [a-zA-Z0-9]' | grep -v -e github -e bitbucket | awk '{print $2}' | $DMENU -p 'ssh$ ')"
