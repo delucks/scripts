@@ -18,14 +18,10 @@ All scripts in this repo are beerware and made by delucks unless otherwise state
 
 ## Shell
 
-* vc-check.sh: Recent, a good example of my current shell style. Looks through a directory for git/svn repos and displays their status.
-* x11/bin/dmenu_man: Open a man page in a new urxvt
-* x11/bin/dmenu_ssh: Parses ~/.ssh/config for hosts, opens one in a new urxvt
-* x11/bin/block: Blurred screen locker
-* x11/bin/dvol: Super hacky volume control & notification script, integrated with Spotify
-* spotifyctrl.sh: Mappings for the Spotify DBUS API
-* digdug.sh: Draw a dig-dug dude in full color
-* colors.sh: Display a pretty-printed output of the current terminal colors
+* vc-check.sh: Looks through a directory for git/svn repos and displays their status.
+* ansible-git-gen.sh: generates an ansible playbook which pulls every git repo in $HOME
+* digdug.sh|colors.sh: colorscheme pretty-print scripts
+* figletsample.sh: sample every figlet font you have with a phrase!
 
 ## Other
 
