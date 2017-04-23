@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+# dmesg with real timestamps
+from subprocess import check_output
+from datetime import datetime, timedelta
+sh = lambda x: check_output(x.split()).strip().decode('utf8')
+up = datetime.strptime(sh('uptime -s'), '%Y-%m-%d %H:%M:%S')
+for sp in [l.split() for l in sh('dmesg').splitlines() if l.startswith('[')]:
+    rt = up + timedelta(seconds=float(sp[1][:-1]))
+    print('[{0}] {1}'.format(rt, ' '.join(sp[2:])))
