@@ -15,7 +15,7 @@ import urllib.request
 from tempfile import mkdtemp
 from urllib.parse import urljoin, quote
 
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 __author__  = 'delucks'
 
 BEETS_WEB_ROOT = os.environ.get('BEETS_API')
@@ -37,11 +37,12 @@ def download_item(item_info, basepath, webroot):
     '''item information struct -> file on disk'''
     # Construct 04 - Song Title.filename
     # TODO add more zeros to the pad amount if there are > 99 tracks in this album
-    filename = '{num:02d} - {title}.{fmt}'.format(
+    fn = '{num:02d} - {title}.{fmt}'.format(
         num=int(item_info['track']),
         title=item_info['title'],
         fmt=item_info['format'].lower()
     )
+    filename = fn.replace('/', '_')  # TODO find a better way to get around /
     file_endpoint = urljoin(webroot, 'item/{0}/file'.format(item_info['id']))
     # download the file
     print(':: Worker downloading {0} to {1}'.format(filename, basepath))
