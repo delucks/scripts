@@ -19,16 +19,22 @@ import json
 import shutil
 import argparse
 import threading
+import subprocess
 import urllib.request
 from tempfile import mkdtemp
 from urllib.parse import urljoin, quote
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__  = 'delucks'
 
 BEETS_WEB_ROOT = os.environ.get('BEETS_API')
 USER_AGENT = '{0} {1}'.format(os.path.basename(__file__), __version__)
 DEFAULT_MUSIC_PATH = os.path.expanduser('~/Music')
+
+def get_dir_size(path):
+    command = 'du -sh {0}'.format(path).split()
+    process = subprocess.run(command, stdout=subprocess.PIPE)
+    return process.stdout.split()[0].decode('utf8')
 
 def http_get(url, user_agent=USER_AGENT):
     '''url -> string'''
@@ -102,9 +108,12 @@ def main():
     # Assemble the beets query and download it to a temp folder
     qs = args.query if args.query else 'artist:' + args.artist if args.artist else 'album:' + args.album
     print('Starting download of query {0}'.format(qs))
+    time_i = time.time()
     basename, dirs = fetch_to_temp_folder(qs, webroot)
+    time_t = time.time()
+    size = get_dir_size(basename)
+    print('Downloaded {0} in {1} seconds'.format(size, time_t - time_i))
     # post-process the created files
-    print('Downloaded successfully.')
     if args.zip:
         # make a zip file out of the directories taken down
         zip_name = os.path.expanduser('~/{0}_{1}'.format(
